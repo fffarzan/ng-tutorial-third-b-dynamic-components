@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ComponentFactoryResolver } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { AuthService, AuthResponseData } from './auth.service';
+import { AlertComponent } from '../shared/alert/alert.component';
 
 @Component({
   selector: 'app-auth',
@@ -14,7 +15,14 @@ export class AuthComponent {
   isLoading = false;
   error: string = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  /**
+   * To use dynamic component, we should add `ComponentFactoryResolver`.
+   */
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) { }
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
@@ -45,6 +53,7 @@ export class AuthComponent {
       },
       errorMessage => {
         console.log(errorMessage);
+        this.showErrorAlert(errorMessage);
         this.error = errorMessage;
         this.isLoading = false;
       }
@@ -53,8 +62,9 @@ export class AuthComponent {
     form.reset();
   }
 
-  onHandleError() {
-    this.error = null;
+  // using ComponentFactoryResolver to add dynamic component.
+  showErrorAlert(message: string) {
+    const alertCmpFactory = this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
   }
 }
 
