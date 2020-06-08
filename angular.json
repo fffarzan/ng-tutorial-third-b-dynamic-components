@@ -24,6 +24,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -119,6 +120,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "ng-tutorial-third-b-dynamic-components"
+    }
+  },
+  "defaultProject": "ng-tutorial-third-b-dynamic-components",
+  "cli": {
+    "analytics": "b1c55235-43c2-46ab-8930-06cd47307ac2"
+  }
 }
