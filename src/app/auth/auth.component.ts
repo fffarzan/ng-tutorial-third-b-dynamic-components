@@ -1,23 +1,29 @@
-import { Component, ComponentFactoryResolver } from '@angular/core';
+import { Component, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { AuthService, AuthResponseData } from './auth.service';
 import { AlertComponent } from '../shared/alert/alert.component';
+import { PlacholderDirective } from '../shared/placeholder/placeholder.directive';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html'
 })
-export class AuthComponent {
+export class AuthComponent implements OnDestroy {
   isLoginMode = true;
   isLoading = false;
   error: string = null;
-
-  /**
-   * To use dynamic component, we should add `ComponentFactoryResolver`.
+  /*
+    Access to the directive.
+    
+    Note: If we pass the 'placeholder' directive as a type it will 
+    automatically find the first place where we use that directive.
    */
+  @ViewChild(PlacholderDirective, { static: false }) alertHost: PlacholderDirective;
+  private closeSub: Subscription;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -62,9 +68,36 @@ export class AuthComponent {
     form.reset();
   }
 
-  // using ComponentFactoryResolver to add dynamic component.
-  showErrorAlert(message: string) {
+  /**
+   * When we get rid of the off component, we don't want to have old 
+   * subscription.
+   */
+  ngOnDestroy() {
+    if (this.closeSub) {
+      this.closeSub.unsubscribe();
+    }
+  }
+
+  private showErrorAlert(message: string) {
     const alertCmpFactory = this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
+    const hostViewContainerRef = this.alertHost.viewContainerRef;
+
+    // clear anything that might have been rendered it before (clear all 
+    // Angular components that have been rendered in that palce before).
+    hostViewContainerRef.clear();
+
+    const componentRef = hostViewContainerRef.createComponent(alertCmpFactory);
+
+    // communicate with the instance of component to send data.
+    componentRef.instance.message = message;
+    this.closeSub = componentRef.instance.close.subscribe(() => {
+
+      // clear the subscriptioon because this component will be removed.
+      this.closeSub.unsubscribe();
+      
+      // remove the component.
+      hostViewContainerRef.clear();
+    });
   }
 }
 

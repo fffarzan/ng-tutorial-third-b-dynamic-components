@@ -1,3 +1,10 @@
+<!-- 
+ We use `ng-template` to have a place in DOM without using real elements 
+ like `div`. Because `ng-template` will not render anything to the DOM. 
+ This is good because we don't add the overhead of an extra DM element 
+ here.
+-->
+<ng-template appPlaceholder></ng-template>
 <div class="row">
   <div class="col-xs-12 col-md-6 col-md-offset-3">
     <div *ngIf="isLoading" style="text-align: center;">

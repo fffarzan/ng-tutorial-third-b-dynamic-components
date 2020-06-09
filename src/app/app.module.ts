@@ -57,6 +57,16 @@ import { PlacholderDirective } from './shared/placeholder/placeholder.directive'
       multi: true
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  /**
+   * Inform Angular that in this case the alert component will need to be 
+   * created at some place and Angular should be prepared for this.
+   * 
+   * Note: `entryComponents` used only for components will need to be 
+   * created without selector or the route config.
+   */
+  entryComponents: [
+    AlertComponent
+  ]
 })
 export class AppModule {}
